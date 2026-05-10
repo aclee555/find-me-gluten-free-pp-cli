@@ -480,14 +480,63 @@ func computeCityStats(city string, bizes []jsonld.Restaurant, dedicatedOnly bool
 	return r
 }
 
-// loadCityBizes returns hydrated bizes whose City matches the given slug
-// (case-insensitive substring match against the og-derived city name).
+// loadCityBizes returns hydrated bizes for a given city slug.
+//
+// Resolution order:
+//  1. The latest city_snapshot row written by `cities sync` is the
+//     authoritative membership list for the slug — fetch each biz_id
+//     directly. This works even when the per-biz JSON-LD doesn't expose
+//     a usable City field (the og:title regex misses non-US shapes and
+//     trailing brand suffixes).
+//  2. Fall back to a substring match against the og-derived City field
+//     for hydrated bizes that came from `places hydrate` rather than a
+//     city sync.
 func loadCityBizes(flags *rootFlags, citySlug string) ([]jsonld.Restaurant, error) {
 	s, err := openStore(flags)
 	if err != nil {
 		return nil, err
 	}
 	defer s.Close()
+	return loadCityBizesFromStore(s, citySlug)
+}
+
+func loadCityBizesFromStore(s *store.Store, citySlug string) ([]jsonld.Restaurant, error) {
+	if bizes, err := loadCityBizesFromSnapshot(s, citySlug); err != nil {
+		return nil, err
+	} else if len(bizes) > 0 {
+		return bizes, nil
+	}
+	return loadCityBizesByCityField(s, citySlug)
+}
+
+// loadCityBizesFromSnapshot returns the bizes referenced by the most
+// recent city_snapshot for citySlug. Returns (nil, nil) when no
+// snapshot exists for the slug; callers should fall back.
+func loadCityBizesFromSnapshot(s *store.Store, citySlug string) ([]jsonld.Restaurant, error) {
+	snaps, err := loadSnapshotsFromStore(s, citySlug)
+	if err != nil {
+		return nil, err
+	}
+	if len(snaps) == 0 {
+		return nil, nil
+	}
+	latest := snaps[len(snaps)-1]
+	out := make([]jsonld.Restaurant, 0, len(latest.BizIDs))
+	for _, id := range latest.BizIDs {
+		raw, err := s.Get(resTypeBiz, storeID(resTypeBiz, id))
+		if err != nil || raw == nil {
+			continue
+		}
+		var r jsonld.Restaurant
+		if json.Unmarshal(raw, &r) != nil {
+			continue
+		}
+		out = append(out, r)
+	}
+	return out, nil
+}
+
+func loadCityBizesByCityField(s *store.Store, citySlug string) ([]jsonld.Restaurant, error) {
 	rows, err := s.List(resTypeBiz, 0)
 	if err != nil {
 		return nil, err
@@ -763,6 +812,10 @@ func loadSnapshots(flags *rootFlags, city string) ([]citySnapshot, error) {
 		return nil, err
 	}
 	defer st.Close()
+	return loadSnapshotsFromStore(st, city)
+}
+
+func loadSnapshotsFromStore(st *store.Store, city string) ([]citySnapshot, error) {
 	rows, err := st.List(resTypeSnapshot, 0)
 	if err != nil {
 		return nil, err

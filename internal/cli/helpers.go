@@ -514,6 +514,9 @@ func compactFields(data json.RawMessage) json.RawMessage {
 }
 
 // compactListFields keeps only high-gravity fields for array responses.
+// When a domain-specific item (e.g. saved city, bookmark, watch entry)
+// has no fields in the generic allowlist, the entire item is preserved
+// — emitting `{}` would strand legitimate data behind --agent / --compact.
 func compactListFields(items []map[string]any) json.RawMessage {
 	keepFields := map[string]bool{
 		"id": true, "name": true, "title": true, "identifier": true,
@@ -529,6 +532,9 @@ func compactListFields(items []map[string]any) json.RawMessage {
 			if keepFields[k] {
 				compact[k] = v
 			}
+		}
+		if len(compact) == 0 && len(item) > 0 {
+			compact = item
 		}
 		filtered = append(filtered, compact)
 	}
