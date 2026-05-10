@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-10T05:16:47.003952Z",
+  "printing_press_version": "4.2.1",
+  "api_name": "find-me-gluten-free",
+  "display_name": "Find Me Gluten Free",
+  "cli_name": "find-me-gluten-free-pp-cli",
+  "owner": "aclee555",
+  "printer": "aclee555",
+  "printer_name": "Tony Lee",
+  "spec_format": "internal",
+  "spec_checksum": "sha256:84a48cbcd3b48c50f1955456c97de9f1a550de2edf73abc13614b2400360b4b5",
+  "run_id": "20260509-152605",
+  "description": "Cache, compare, and diff Find Me Gluten Free cities from your terminal. Multi-city trip compare, lat/lng radius search, city-wide review feeds, and safety-report filters the consumer app can't show.",
+  "mcp_binary": "find-me-gluten-free-pp-mcp",
+  "mcp_tool_count": 8,
+  "mcp_public_tool_count": 8,
+  "mcp_ready": "full",
+  "api_version": "0.1.0",
+  "auth_type": "none",
+  "novel_features": [
+    {
+      "name": "Multi-city trip compare",
+      "command": "trip compare",
+      "description": "Compare 2+ cities side-by-side: dedicated-GF count, GF-menu count, total places, average rating, and top-rated picks per city — the question the consumer apps can't answer."
+    },
+    {
+      "name": "City diff since last sync",
+      "command": "cities diff",
+      "description": "Show what changed in a city since the last time you synced it: added/removed places, rating drift, new low-star safety reports."
+    },
+    {
+      "name": "Lat/lng radius search",
+      "command": "places near",
+      "description": "Find dedicated-GF or GF-menu places within a radius of a lat/lng using Haversine over locally cached schema.org geo data."
+    },
+    {
+      "name": "City stats rollup",
+      "command": "places stats",
+      "description": "One-shot SQL aggregate over a city: count, average rating, p50/p90 rating, dedicated-GF percent, GF-menu percent. Filterable by cuisine."
+    },
+    {
+      "name": "City-wide recent reviews",
+      "command": "reviews recent",
+      "description": "Newest reviews across every place in a city, sorted by datePublished. Filter to safety-report-style 1-2 star reviews with --max-rating."
+    },
+    {
+      "name": "Watchlist with change report",
+      "command": "watch",
+      "description": "Watch specific places; periodic 'watch report' fetches each and reports rating drift and new low-rated reviews since the baseline."
+    },
+    {
+      "name": "Cuisine cross-city compare",
+      "command": "cuisines compare",
+      "description": "For one cuisine across multiple cities: per-city count, dedicated-GF percent, top-rated place. Useful when planning where on a trip GF pizza (or burgers, or bakery) is most available."
+    },
+    {
+      "name": "Safety-report review filter",
+      "command": "reviews safety",
+      "description": "Filter cached reviews for one place to those mentioning got-glutened / cross-contamination keywords from a curated, deterministic list — no LLM."
+    }
+  ]
+}

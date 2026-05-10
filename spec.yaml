@@ -1,0 +1,196 @@
+name: find-me-gluten-free
+display_name: Find Me Gluten Free
+description: "A celiac trip-planner's terminal companion: every Find Me Gluten Free city, cached locally with cross-city compare, change tracking, and review safety filters the consumer app doesn't have."
+cli_description: "Cache, compare, and diff Find Me Gluten Free cities from your terminal. Multi-city trip compare, lat/lng radius search, city-wide review feeds, and safety-report filters the consumer app can't show."
+version: "0.1.0"
+base_url: "https://www.findmeglutenfree.com"
+
+auth:
+  type: none
+
+config:
+  format: toml
+  path: "~/.config/find-me-gluten-free-pp-cli/config.toml"
+
+resources:
+  countries:
+    description: "Country directory"
+    endpoints:
+      list:
+        method: GET
+        path: "/countries"
+        description: "List every country with gluten-free coverage on Find Me Gluten Free."
+        response_format: html
+        html_extract:
+          mode: links
+          link_prefixes: ["/"]
+          limit: 300
+        response:
+          type: array
+          item: html_link
+
+  states:
+    description: "State / region directory under one country"
+    endpoints:
+      list:
+        method: GET
+        path: "/{country}"
+        description: "List states or regions in a country (e.g., /us, /gb, /fr)."
+        params:
+          - name: country
+            type: string
+            required: true
+            positional: true
+            description: "Two-letter country code (us, gb, fr, ie, ca)."
+        response_format: html
+        html_extract:
+          mode: links
+          link_prefixes: ["/"]
+          limit: 100
+        response:
+          type: array
+          item: html_link
+
+  cities:
+    description: "City directory and rankings"
+    endpoints:
+      list:
+        method: GET
+        path: "/{country}/{state}"
+        description: "List cities in a state or region (e.g., /us/va lists Virginia cities)."
+        params:
+          - name: country
+            type: string
+            required: true
+            positional: true
+            description: "Country code (us, gb, ...)."
+          - name: state
+            type: string
+            required: true
+            positional: true
+            description: "State or region code (va, ca, on, ...)."
+        response_format: html
+        html_extract:
+          mode: links
+          link_prefixes: ["/"]
+          limit: 1000
+        response:
+          type: array
+          item: html_link
+
+      ranked:
+        method: GET
+        path: "/most-gluten-free-friendly-cities"
+        description: "Find Me Gluten Free's published ranking of the most gluten-free-friendly cities."
+        response_format: html
+        html_extract:
+          mode: links
+          link_prefixes: ["/"]
+          limit: 200
+        response:
+          type: array
+          item: html_link
+
+  places:
+    description: "Restaurants and the places-by-city / places-by-cuisine views"
+    endpoints:
+      list:
+        method: GET
+        path: "/{country}/{state}/{city}"
+        description: "List restaurants in a city (e.g., /us/va/richmond)."
+        params:
+          - name: country
+            type: string
+            required: true
+            positional: true
+            description: "Country code."
+          - name: state
+            type: string
+            required: true
+            positional: true
+            description: "State or region code."
+          - name: city
+            type: string
+            required: true
+            positional: true
+            description: "City slug (e.g., richmond)."
+        response_format: html
+        html_extract:
+          mode: links
+          link_prefixes: ["/biz/"]
+          limit: 500
+        response:
+          type: array
+          item: html_link
+
+      filter:
+        method: GET
+        path: "/{country}/{state}/{city}/{filter}"
+        description: "List restaurants in a city filtered by cuisine or feature. The filter slug can be 'dedicated-facilities', 'gluten-free-menu', or any of 200+ cuisine slugs (burgers, pizza, bakeries, ...)."
+        params:
+          - name: country
+            type: string
+            required: true
+            positional: true
+            description: "Country code."
+          - name: state
+            type: string
+            required: true
+            positional: true
+            description: "State or region code."
+          - name: city
+            type: string
+            required: true
+            positional: true
+            description: "City slug."
+          - name: filter
+            type: string
+            required: true
+            positional: true
+            description: "Filter slug: dedicated-facilities, gluten-free-menu, or a cuisine slug (burgers, pizza, bakeries, asian, breakfast, etc.)."
+        response_format: html
+        html_extract:
+          mode: links
+          link_prefixes: ["/biz/"]
+          limit: 500
+        response:
+          type: array
+          item: html_link
+
+      get:
+        method: GET
+        path: "/biz/{slug}/{biz_id}"
+        description: "Get a single restaurant page. Use 'places hydrate' for the parsed schema.org JSON-LD (rating, reviews, lat/lng) — this raw command returns the title/description/canonical metadata only."
+        params:
+          - name: slug
+            type: string
+            required: true
+            positional: true
+            description: "Restaurant slug from the URL (e.g., 'pinkys')."
+          - name: biz_id
+            type: string
+            required: true
+            positional: true
+            description: "Restaurant numeric ID from the URL (e.g., 6118524171452416)."
+        response_format: html
+        html_extract:
+          mode: page
+        response:
+          type: object
+          item: html_page
+
+  chains:
+    description: "Chain restaurant index"
+    endpoints:
+      list:
+        method: GET
+        path: "/chains"
+        description: "List chain restaurants with gluten-free options."
+        response_format: html
+        html_extract:
+          mode: links
+          link_prefixes: ["/biz/", "/chain/"]
+          limit: 500
+        response:
+          type: array
+          item: html_link

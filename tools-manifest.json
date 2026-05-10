@@ -1,0 +1,166 @@
+{
+  "api_name": "find-me-gluten-free",
+  "base_url": "https://www.findmeglutenfree.com",
+  "description": "A celiac trip-planner's terminal companion: every Find Me Gluten Free city, cached locally with cross-city compare, change tracking, and review safety filters the consumer app doesn't have.",
+  "mcp_ready": "full",
+  "http_transport": "standard",
+  "auth": {
+    "type": "none"
+  },
+  "required_headers": [],
+  "tools": [
+    {
+      "name": "chains_list",
+      "description": "List chain restaurants with gluten-free options. Returns array of html_link.",
+      "method": "GET",
+      "path": "/chains",
+      "no_auth": true,
+      "params": []
+    },
+    {
+      "name": "cities_list",
+      "description": "List cities in a state or region (e.g., /us/va lists Virginia cities). Required: country, state. Returns array of html_link.",
+      "method": "GET",
+      "path": "/{country}/{state}",
+      "no_auth": true,
+      "params": [
+        {
+          "name": "country",
+          "type": "string",
+          "location": "path",
+          "description": "Country code (us, gb, ...).",
+          "required": true
+        },
+        {
+          "name": "state",
+          "type": "string",
+          "location": "path",
+          "description": "State or region code (va, ca, on, ...).",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "cities_ranked",
+      "description": "Find Me Gluten Free's published ranking of the most gluten-free-friendly cities. Returns array of html_link.",
+      "method": "GET",
+      "path": "/most-gluten-free-friendly-cities",
+      "no_auth": true,
+      "params": []
+    },
+    {
+      "name": "countries_list",
+      "description": "List every country with gluten-free coverage on Find Me Gluten Free. Returns array of html_link.",
+      "method": "GET",
+      "path": "/countries",
+      "no_auth": true,
+      "params": []
+    },
+    {
+      "name": "places_filter",
+      "description": "List restaurants in a city filtered by cuisine or feature. The filter slug can be 'dedicated-facilities', 'gluten-free-menu', or any of 200+ cuisine slugs (burgers, pizza, bakeries, ...). Required: country, state, city, filter. Returns array of html_link.",
+      "method": "GET",
+      "path": "/{country}/{state}/{city}/{filter}",
+      "no_auth": true,
+      "params": [
+        {
+          "name": "country",
+          "type": "string",
+          "location": "path",
+          "description": "Country code.",
+          "required": true
+        },
+        {
+          "name": "state",
+          "type": "string",
+          "location": "path",
+          "description": "State or region code.",
+          "required": true
+        },
+        {
+          "name": "city",
+          "type": "string",
+          "location": "path",
+          "description": "City slug.",
+          "required": true
+        },
+        {
+          "name": "filter",
+          "type": "string",
+          "location": "path",
+          "description": "Filter slug: dedicated-facilities, gluten-free-menu, or a cuisine slug (burgers, pizza, bakeries, asian, breakfast, etc.).",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "places_get",
+      "description": "Get a single restaurant page. Use 'places hydrate' for the parsed schema.org JSON-LD (rating, reviews, lat/lng) — this raw command returns the title/description/canonical metadata only. Required: slug, biz_id.",
+      "method": "GET",
+      "path": "/biz/{slug}/{biz_id}",
+      "no_auth": true,
+      "params": [
+        {
+          "name": "slug",
+          "type": "string",
+          "location": "path",
+          "description": "Restaurant slug from the URL (e.g., 'pinkys').",
+          "required": true
+        },
+        {
+          "name": "biz_id",
+          "type": "string",
+          "location": "path",
+          "description": "Restaurant numeric ID from the URL (e.g., 6118524171452416).",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "places_list",
+      "description": "List restaurants in a city (e.g., /us/va/richmond). Required: country, state, city. Returns array of html_link.",
+      "method": "GET",
+      "path": "/{country}/{state}/{city}",
+      "no_auth": true,
+      "params": [
+        {
+          "name": "country",
+          "type": "string",
+          "location": "path",
+          "description": "Country code.",
+          "required": true
+        },
+        {
+          "name": "state",
+          "type": "string",
+          "location": "path",
+          "description": "State or region code.",
+          "required": true
+        },
+        {
+          "name": "city",
+          "type": "string",
+          "location": "path",
+          "description": "City slug (e.g., richmond).",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "states_list",
+      "description": "List states or regions in a country (e.g., /us, /gb, /fr). Required: country. Returns array of html_link.",
+      "method": "GET",
+      "path": "/{country}",
+      "no_auth": true,
+      "params": [
+        {
+          "name": "country",
+          "type": "string",
+          "location": "path",
+          "description": "Two-letter country code (us, gb, fr, ie, ca).",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+{
+  "api_name": "find-me-gluten-free",
+  "novelty_score": 0,
+  "alternatives": [
+    {
+      "name": "datatodavid/GF_Restaurant_Scraper",
+      "url": "https://github.com/datatodavid/GF_Restaurant_Scraper",
+      "language": "Python",
+      "install_method": "",
+      "stars": 0,
+      "last_updated": "",
+      "command_count": 0,
+      "has_json_output": false,
+      "has_auth_support": false
+    }
+  ],
+  "gaps": [],
+  "patterns": [],
+  "recommendation": "proceed",
+  "researched_at": "2026-05-09T22:30:00Z",
+  "novel_features": [
+    {
+      "name": "Multi-city trip compare",
+      "command": "trip compare",
+      "description": "Compare 2+ cities side-by-side: dedicated-GF count, GF-menu count, total places, average rating, and top-rated picks per city — the question the consumer apps can't answer.",
+      "rationale": "Requires a cross-city local SQL join across cached city + business + review data. Find Me Gluten Free, Atly, and Gluten Dude all show one city at a time.",
+      "example": "find-me-gluten-free-pp-cli trip compare lisbon porto madrid --json",
+      "why_it_matters": "Reach for this when the user is choosing between cities for a celiac trip; emits structured per-city counts an agent can rank or filter.",
+      "group": "Trip planning that compounds locally"
+    },
+    {
+      "name": "City diff since last sync",
+      "command": "cities diff",
+      "description": "Show what changed in a city since the last time you synced it: added/removed places, rating drift, new low-star safety reports.",
+      "rationale": "Diffs the current city snapshot against the prior snapshot using sitemap <lastmod>. The consumer app re-renders from scratch every visit and never tells you what's new.",
+      "example": "find-me-gluten-free-pp-cli cities diff pittsburgh --since last-sync --json",
+      "why_it_matters": "Reach for this before a return visit to a city the user has tracked previously — surfaces only what's actually changed.",
+      "group": "Trip planning that compounds locally"
+    },
+    {
+      "name": "Lat/lng radius search",
+      "command": "places near",
+      "description": "Find dedicated-GF or GF-menu places within a radius of a lat/lng using Haversine over locally cached schema.org geo data.",
+      "rationale": "The site is bucketed by city and ZIP, not by coordinates. Local geo math on parsed JSON-LD <code>location.geo</code> unlocks 'near here' on any seed point.",
+      "example": "find-me-gluten-free-pp-cli places near --lat 38.9072 --lng -77.0369 --radius-km 2 --dedicated --json",
+      "why_it_matters": "Reach for this when an agent has coordinates (a hotel, an attraction) and needs nearby celiac-safe options ranked.",
+      "group": "Geographic queries the site doesn't expose"
+    },
+    {
+      "name": "City stats rollup",
+      "command": "places stats",
+      "description": "One-shot SQL aggregate over a city: count, average rating, p50/p90 rating, dedicated-GF percent, GF-menu percent. Filterable by cuisine.",
+      "rationale": "Find Me Gluten Free has no stats endpoint. The aggregate exists only because the local cache stores every biz with parsed rating + flags.",
+      "example": "find-me-gluten-free-pp-cli places stats --city austin --cuisine pizza --json",
+      "why_it_matters": "Reach for this when an agent needs a one-line answer to 'how celiac-friendly is city X for cuisine Y?' before drilling into specific places.",
+      "group": "Aggregates the site doesn't compute"
+    },
+    {
+      "name": "City-wide recent reviews",
+      "command": "reviews recent",
+      "description": "Newest reviews across every place in a city, sorted by datePublished. Filter to safety-report-style 1-2 star reviews with --max-rating.",
+      "rationale": "The site buries reviews per-business — there's no city-wide review feed. Cross-business review join is local-only.",
+      "example": "find-me-gluten-free-pp-cli reviews recent --city portland --max-rating 2 --since 2026-04-01 --json",
+      "why_it_matters": "Reach for this when checking for new safety reports across a city before a trip; the most recent low-stars are the highest-signal warnings.",
+      "group": "Reviews surfaced as a feed"
+    },
+    {
+      "name": "Watchlist with change report",
+      "command": "watch",
+      "description": "Watch specific places; periodic 'watch report' fetches each and reports rating drift and new low-rated reviews since the baseline.",
+      "rationale": "Per-business snapshot diff using sitemap <lastmod> + cached aggregateRating. Consumer apps have no watchlist-with-change-report.",
+      "example": "find-me-gluten-free-pp-cli watch report --json",
+      "why_it_matters": "Reach for this on a personal allowlist of trusted places; surfaces only places where something celiac-relevant changed.",
+      "group": "Trip planning that compounds locally"
+    },
+    {
+      "name": "Cuisine cross-city compare",
+      "command": "cuisines compare",
+      "description": "For one cuisine across multiple cities: per-city count, dedicated-GF percent, top-rated place. Useful when planning where on a trip GF pizza (or burgers, or bakery) is most available.",
+      "rationale": "Joins the site's 214-filter taxonomy across cities; the site only renders one cuisine in one city per page.",
+      "example": "find-me-gluten-free-pp-cli cuisines compare burgers us va richmond charlottesville --json",
+      "why_it_matters": "Reach for this when cuisine availability matters for the trip and the user wants to weigh cities by what's actually on offer.",
+      "group": "Aggregates the site doesn't compute"
+    },
+    {
+      "name": "Safety-report review filter",
+      "command": "reviews safety",
+      "description": "Filter cached reviews for one place to those mentioning got-glutened / cross-contamination keywords from a curated, deterministic list — no LLM.",
+      "rationale": "Find Me Gluten Free has no safety filter. Filter is keyword-only and lives in a static reference list, so it's deterministic and verifiable.",
+      "example": "find-me-gluten-free-pp-cli reviews safety 6118524171452416 --json",
+      "why_it_matters": "Reach for this before vetting a specific place; surfaces just the reviews that report a celiac reaction or cross-contamination.",
+      "group": "Reviews surfaced as a feed"
+    }
+  ],
+  "novel_features_built": [
+    {
+      "name": "Multi-city trip compare",
+      "command": "trip compare",
+      "description": "Compare 2+ cities side-by-side: dedicated-GF count, GF-menu count, total places, average rating, and top-rated picks per city — the question the consumer apps can't answer.",
+      "rationale": "Requires a cross-city local SQL join across cached city + business + review data. Find Me Gluten Free, Atly, and Gluten Dude all show one city at a time.",
+      "example": "find-me-gluten-free-pp-cli trip compare lisbon porto madrid --json",
+      "why_it_matters": "Reach for this when the user is choosing between cities for a celiac trip; emits structured per-city counts an agent can rank or filter.",
+      "group": "Trip planning that compounds locally"
+    },
+    {
+      "name": "City diff since last sync",
+      "command": "cities diff",
+      "description": "Show what changed in a city since the last time you synced it: added/removed places, rating drift, new low-star safety reports.",
+      "rationale": "Diffs the current city snapshot against the prior snapshot using sitemap <lastmod>. The consumer app re-renders from scratch every visit and never tells you what's new.",
+      "example": "find-me-gluten-free-pp-cli cities diff pittsburgh --since last-sync --json",
+      "why_it_matters": "Reach for this before a return visit to a city the user has tracked previously — surfaces only what's actually changed.",
+      "group": "Trip planning that compounds locally"
+    },
+    {
+      "name": "Lat/lng radius search",
+      "command": "places near",
+      "description": "Find dedicated-GF or GF-menu places within a radius of a lat/lng using Haversine over locally cached schema.org geo data.",
+      "rationale": "The site is bucketed by city and ZIP, not by coordinates. Local geo math on parsed JSON-LD <code>location.geo</code> unlocks 'near here' on any seed point.",
+      "example": "find-me-gluten-free-pp-cli places near --lat 38.9072 --lng -77.0369 --radius-km 2 --dedicated --json",
+      "why_it_matters": "Reach for this when an agent has coordinates (a hotel, an attraction) and needs nearby celiac-safe options ranked.",
+      "group": "Geographic queries the site doesn't expose"
+    },
+    {
+      "name": "City stats rollup",
+      "command": "places stats",
+      "description": "One-shot SQL aggregate over a city: count, average rating, p50/p90 rating, dedicated-GF percent, GF-menu percent. Filterable by cuisine.",
+      "rationale": "Find Me Gluten Free has no stats endpoint. The aggregate exists only because the local cache stores every biz with parsed rating + flags.",
+      "example": "find-me-gluten-free-pp-cli places stats --city austin --cuisine pizza --json",
+      "why_it_matters": "Reach for this when an agent needs a one-line answer to 'how celiac-friendly is city X for cuisine Y?' before drilling into specific places.",
+      "group": "Aggregates the site doesn't compute"
+    },
+    {
+      "name": "City-wide recent reviews",
+      "command": "reviews recent",
+      "description": "Newest reviews across every place in a city, sorted by datePublished. Filter to safety-report-style 1-2 star reviews with --max-rating.",
+      "rationale": "The site buries reviews per-business — there's no city-wide review feed. Cross-business review join is local-only.",
+      "example": "find-me-gluten-free-pp-cli reviews recent --city portland --max-rating 2 --since 2026-04-01 --json",
+      "why_it_matters": "Reach for this when checking for new safety reports across a city before a trip; the most recent low-stars are the highest-signal warnings.",
+      "group": "Reviews surfaced as a feed"
+    },
+    {
+      "name": "Watchlist with change report",
+      "command": "watch",
+      "description": "Watch specific places; periodic 'watch report' fetches each and reports rating drift and new low-rated reviews since the baseline.",
+      "rationale": "Per-business snapshot diff using sitemap <lastmod> + cached aggregateRating. Consumer apps have no watchlist-with-change-report.",
+      "example": "find-me-gluten-free-pp-cli watch report --json",
+      "why_it_matters": "Reach for this on a personal allowlist of trusted places; surfaces only places where something celiac-relevant changed.",
+      "group": "Trip planning that compounds locally"
+    },
+    {
+      "name": "Cuisine cross-city compare",
+      "command": "cuisines compare",
+      "description": "For one cuisine across multiple cities: per-city count, dedicated-GF percent, top-rated place. Useful when planning where on a trip GF pizza (or burgers, or bakery) is most available.",
+      "rationale": "Joins the site's 214-filter taxonomy across cities; the site only renders one cuisine in one city per page.",
+      "example": "find-me-gluten-free-pp-cli cuisines compare pizza lisbon porto madrid --json",
+      "why_it_matters": "Reach for this when cuisine availability matters for the trip and the user wants to weigh cities by what's actually on offer.",
+      "group": "Aggregates the site doesn't compute"
+    },
+    {
+      "name": "Safety-report review filter",
+      "command": "reviews safety",
+      "description": "Filter cached reviews for one place to those mentioning got-glutened / cross-contamination keywords from a curated, deterministic list — no LLM.",
+      "rationale": "Find Me Gluten Free has no safety filter. Filter is keyword-only and lives in a static reference list, so it's deterministic and verifiable.",
+      "example": "find-me-gluten-free-pp-cli reviews safety 6118524171452416 --json",
+      "why_it_matters": "Reach for this before vetting a specific place; surfaces just the reviews that report a celiac reaction or cross-contamination.",
+      "group": "Reviews surfaced as a feed"
+    }
+  ],
+  "narrative": {
+    "display_name": "Find Me Gluten Free",
+    "headline": "A celiac trip-planner's terminal companion: every Find Me Gluten Free city, cached locally with cross-city compare, change tracking, and review safety filters the consumer app doesn't have.",
+    "value_prop": "The Find Me Gluten Free iOS/Android app is great for 'what's near me right now.' This CLI is for the celiac who plans a trip three weeks out, the parent who returns to the same six cities every year, and the AI agent helping a celiac client weigh dining options. Sync any city once, then run trip compare across cities, cities diff to see what changed since last visit, places near for lat/lng radius search, and reviews recent --max-rating 2 to surface fresh safety reports.",
+    "auth_narrative": "No authentication required. The CLI reads only public city, business, and sitemap pages via standard HTTP. The site's ToS prohibits crawling and its robots.txt extra-disallows AI bots from /biz, /posts, /postal — so this CLI ships with an honest User-Agent identifying itself as a personal user tool, a 1 req/sec default rate limit (FMGF_RPS to override, capped at 5), and no bulk-export commands. Use it as a personal companion, not a crawler.",
+    "quickstart": [
+      {
+        "command": "find-me-gluten-free-pp-cli cities sync us va richmond",
+        "comment": "Foundation: fetch every place in Richmond, parse schema.org JSON-LD, persist into the local SQLite cache so all later commands are offline-fast"
+      },
+      {
+        "command": "find-me-gluten-free-pp-cli places stats --city richmond --json",
+        "comment": "City-wide aggregate (count, avg rating, p50/p90, dedicated %, GF-menu %) computed locally — Find Me Gluten Free has no equivalent endpoint"
+      },
+      {
+        "command": "find-me-gluten-free-pp-cli trip compare richmond charlottesville norfolk --json",
+        "comment": "The differentiator: side-by-side per-city celiac-friendliness — this question simply isn't answerable in the consumer app"
+      },
+      {
+        "command": "find-me-gluten-free-pp-cli reviews recent --city richmond --max-rating 2 --json",
+        "comment": "City-wide review feed sorted newest-first; --max-rating 2 surfaces the safety-report-style 1-2 star reviews most worth reading before a trip"
+      },
+      {
+        "command": "find-me-gluten-free-pp-cli cities diff richmond --since last-sync --json",
+        "comment": "After a second 'cities sync' run, this surfaces only what changed (added/removed places, count delta) — re-reading from scratch every visit is the consumer-app failure mode"
+      }
+    ],
+    "troubleshoots": [
+      {
+        "symptom": "HTTP 429 from findmeglutenfree.com",
+        "fix": "Lower the rate via the global flag: --rate-limit 0.5 (one request every two seconds)."
+      },
+      {
+        "symptom": "places stats --city <slug> returns total: 0",
+        "fix": "City has not been hydrated yet. Run: find-me-gluten-free-pp-cli cities sync <country> <state> <city>"
+      },
+      {
+        "symptom": "places near returns []",
+        "fix": "Haversine search runs over the local cache. Sync at least one city near the lat/lng first via 'cities sync', then retry."
+      },
+      {
+        "symptom": "cities diff says 'need 2+ snapshots'",
+        "fix": "Run 'cities sync <country> <state> <city>' a second time; diff compares the two most recent snapshots."
+      },
+      {
+        "symptom": "places hydrate fails with 'no application/ld+json block found'",
+        "fix": "A small number of newly listed pages render without schema.org data. The biz exists; the rich detail will appear after the next site index pass. Re-try in 24 hours."
+      }
+    ],
+    "when_to_use": "Use this CLI when planning a celiac-safe trip, weighing multiple cities, tracking changes to a personal allowlist, or feeding gluten-free restaurant data to an AI agent. It is structurally not the right tool for a celiac who only needs 'what's safe within a half mile of where I'm standing right now' — that's the consumer app's strength. Reach for this when the question is 'where on this trip is GF pizza most available?', 'what changed in Pittsburgh since I was last there?', or 'list every dedicated-GF place in Portland with at least a 4-star average and a recent review.'",
+    "recipes": [
+      {
+        "title": "Plan a 3-city trip by GF density",
+        "command": "find-me-gluten-free-pp-cli trip compare richmond charlottesville norfolk --json --select dedicated_count,avg_rating,highest_rated",
+        "explanation": "After 'cities sync' for each, this asks which has the most dedicated places and the highest average rating; --select narrows the per-city JSON to the comparison fields an agent needs."
+      },
+      {
+        "title": "Find safe lunch within walking distance of your hotel",
+        "command": "find-me-gluten-free-pp-cli places near --lat 41.1496 --lng -8.6109 --radius-km 1 --dedicated --json",
+        "explanation": "Haversine over the local cache returns dedicated-GF places within 1 km of the hotel lat/lng; useful when an agent already has coordinates."
+      },
+      {
+        "title": "Surface fresh safety reports before a trip",
+        "command": "find-me-gluten-free-pp-cli reviews recent --city richmond --max-rating 2 --json --select biz_name,rating,date_published,description",
+        "explanation": "City-wide low-rated reviews sorted newest-first; --select keeps the response under a few KB."
+      },
+      {
+        "title": "Watch your personal allowlist for safety drift",
+        "command": "find-me-gluten-free-pp-cli watch report --json",
+        "explanation": "After running 'watch add <biz_id>' for places you trust, watch report re-fetches each (rate-limited) and surfaces rating drift or new low-rated reviews."
+      },
+      {
+        "title": "Compare a cuisine across trip stops",
+        "command": "find-me-gluten-free-pp-cli cuisines compare burgers us va richmond charlottesville --json",
+        "explanation": "The 214-cuisine taxonomy joined across cities; cuisine slug first, then country and state, then 2+ city slugs."
+      }
+    ],
+    "trigger_phrases": [
+      "find me gluten free in",
+      "celiac safe restaurants in",
+      "dedicated gluten free near",
+      "compare gluten free places between",
+      "what changed in <city> since I last checked",
+      "use find-me-gluten-free",
+      "run find-me-gluten-free"
+    ]
+  }
+}

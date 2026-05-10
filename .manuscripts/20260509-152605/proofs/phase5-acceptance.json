@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "api_name": "find-me-gluten-free",
+  "run_id": "20260509-152605",
+  "status": "pass",
+  "level": "full",
+  "matrix_size": 105,
+  "tests_passed": 105,
+  "tests_skipped": 76,
+  "auth_context": {
+    "type": "none"
+  }
+}

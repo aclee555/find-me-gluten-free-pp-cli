@@ -1,0 +1,14 @@
+# Built binaries (these are produced by `go build` / `go install`).
+/find-me-gluten-free-pp-cli
+/find-me-gluten-free-pp-mcp
+
+# Build / staging dirs
+/build/
+
+# Transient test artifacts produced by `printing-press dogfood` and friends.
+/dogfood-results.json
+/workflow-verify-report.json
+
+# OS / editor cruft
+.DS_Store
+*.swp

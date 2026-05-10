@@ -1,0 +1,27 @@
+{
+  "manifest_version": "0.3",
+  "name": "find-me-gluten-free-pp-mcp",
+  "display_name": "Find Me Gluten Free",
+  "version": "4.2.1",
+  "description": "Cache, compare, and diff Find Me Gluten Free cities from your terminal. Multi-city trip compare, lat/lng radius search, city-wide review feeds, and safety-report filters the consumer app can't show.",
+  "author": {
+    "name": "CLI Printing Press"
+  },
+  "license": "Apache-2.0",
+  "server": {
+    "type": "binary",
+    "entry_point": "bin/find-me-gluten-free-pp-mcp",
+    "mcp_config": {
+      "command": "${__dirname}/bin/find-me-gluten-free-pp-mcp",
+      "args": []
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=1.0.0",
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ]
+  }
+}

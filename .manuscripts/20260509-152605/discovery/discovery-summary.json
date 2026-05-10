@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "api_name": "find-me-gluten-free",
+  "captured_at": "2026-05-09T22:26:00Z",
+  "capture_method": "manual-curl-and-sitemap",
+  "reachability": {
+    "mode": "standard_http",
+    "confidence": 0.95,
+    "needs_browser_capture": false,
+    "needs_clearance_cookie": false,
+    "rationale": "probe-reachability returned standard_http on home, city, and biz pages; full HTML and embedded JSON-LD reachable via stdlib HTTP without any challenge"
+  },
+  "transport": {
+    "kind": "standard_http",
+    "uses_browser_http_transport": false,
+    "uses_clearance_cookie": false
+  },
+  "auth": {
+    "type": "none",
+    "session_cookies_present": ["JSESSIONID"],
+    "session_required_for_read": false,
+    "browser_session_available": false
+  },
+  "endpoints_observed": [
+    {"method": "GET", "path": "/sitemapindex", "format": "xml"},
+    {"method": "GET", "path": "/sitemaps/{n}", "format": "xml"},
+    {"method": "GET", "path": "/{country}", "format": "html"},
+    {"method": "GET", "path": "/{country}/{state}", "format": "html"},
+    {"method": "GET", "path": "/{country}/{state}/{city}", "format": "html"},
+    {"method": "GET", "path": "/{country}/{state}/{city}/{filter}", "format": "html"},
+    {"method": "GET", "path": "/biz/{slug}/{id}", "format": "html", "embeds": "schema.org Restaurant JSON-LD"},
+    {"method": "GET", "path": "/chains", "format": "html"},
+    {"method": "GET", "path": "/most-gluten-free-friendly-cities", "format": "html"},
+    {"method": "GET", "path": "/countries", "format": "html"},
+    {"method": "GET", "path": "/postal/{zip}", "format": "redirect"}
+  ],
+  "etiquette": {
+    "tos_forbids_scraping": true,
+    "robots_disallows_ai_bots_extra": ["/biz", "/posts", "/postal"],
+    "default_user_agent_must_be_honest": true,
+    "default_rps_cap": 1
+  }
+}
