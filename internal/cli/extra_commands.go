@@ -65,7 +65,7 @@ func wireExtraCommands(rootCmd *cobra.Command, flags *rootFlags) {
 // every HTTP request. Find Me Gluten Free's robots.txt extra-disallows
 // AI bots from /biz, /posts, /postal — we make our identity transparent
 // rather than impersonate Chrome.
-const fmgfUserAgent = "github.com/aclee555/find-me-gluten-free-pp-cli/0.1.0 (+https://github.com/mvanhorn/find-me-gluten-free-pp-cli)"
+const fmgfUserAgent = "github.com/aclee555/find-me-gluten-free-pp-cli/0.1.1 (+https://github.com/mvanhorn/find-me-gluten-free-pp-cli)"
 
 // ============================================================
 // Storage helpers (resource_type strings)
